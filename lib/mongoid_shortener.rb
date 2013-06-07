@@ -9,4 +9,9 @@ module MongoidShortener
   def self.generate url
     ShortenedUrl.generate url
   end
+
+  def self.update short_url, new_url
+    ShortenedUrl.update short_url, new_url
+  end
+
 end
