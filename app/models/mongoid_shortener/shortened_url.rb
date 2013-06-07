@@ -74,5 +74,9 @@ module MongoidShortener
 
       return sl
     end
+
+    def self.update(short_url, new_url)
+      unique_key = short.url.slice(MongoidShortener.prefix_url.length, short_url.length - MongoidShortener.prefix_url.length)
+    end
   end
 end
