@@ -48,6 +48,7 @@ module MongoidShortener
       if !orig_url.blank? and orig_url !~ REGEX_LINK_HAS_PROTOCOL
         orig_url.insert(0, URL_PROTOCOL_HTTP)
       end
+      #orig_url = clean_url orig_url
 
       # don't want to generate the link if it has already been generated
       # so check the datastore
@@ -75,10 +76,31 @@ module MongoidShortener
       return sl
     end
 
-    def self.update(short_url, new_url)
-      unique_key = short.url.slice(MongoidShortener.prefix_url.length, short_url.length - MongoidShortener.prefix_url.length)
+    def clean_url url
+      if !url.blank? and url !~ REGEX_LINK_HAS_PROTOCOL
+        url.insert(0, URL_PROTOCOL_HTTP)
+      end
 
-      return unique_key
+      return url
+    end
+
+    def self.update(short_url, new_url)
+      unique_key = short_url.slice(MongoidShortener.prefix_url.length, short_url.length - MongoidShortener.prefix_url.length)
+
+      if !new_url.blank? and new_url !~ REGEX_LINK_HAS_PROTOCOL
+        new_url.insert(0, URL_PROTOCOL_HTTP)
+      end
+
+      s1 = ShortenedUrl.where(:unique_key => unique_key).first
+
+      if s1      
+        s1.url = new_url
+        begin
+          s1.update
+        rescue
+          false
+        end
+      end
     end
   end
 end
